@@ -8,23 +8,26 @@
   </div>
 </div>
 
-<!-- Firebase CDN -->
-<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore-compat.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
 <script type="module">
-  // --- Firebase (Compat, because you're using v8-style APIs) ---
-  const firebaseConfig = {
-    apiKey: "AIzaSyAt_RwhWPoBXVL8RNMMVXRckc4GCVFcRWw",
-    authDomain: "valentine-c63b3.firebaseapp.com",
-    projectId: "valentine-c63b3",
-    storageBucket: "valentine-c63b3.firebasestorage.app",
-    messagingSenderId: "406251981974",
-    appId: "1:406251981974:web:af03ce19b021a2e2a446b7"
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  
+import { getFirestore, collection, addDoc }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+/* 🔽 PASTE YOUR FIREBASE CONFIG HERE */
+const firebaseConfig = {
+   apiKey: "AIzaSyAt_RwhWPoBXVL8RNMMVXRckc4GCVFcRWw",
+   authDomain: "valentine-c63b3.firebaseapp.com",
+   projectId: "valentine-c63b3",
+   storageBucket: "valentine-c63b3.firebasestorage.app",
+   messagingSenderId: "406251981974",
+   appId: "1:406251981974:web:af03ce19b021a2e2a446b7"
   };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
   let noCount = 0;
 
