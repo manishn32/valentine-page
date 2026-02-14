@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Be My Valentine ❤️</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial;
+}
+
+body {
+  background-image: url('background.jpg'); /* your image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.95);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: opacity 0.6s ease;
+}
+
+button {
+  padding: 12px 20px;
+  margin: 10px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#yesBtn { background: #4CAF50; color: white; }
+#noBtn { background: #f44336; color: white; }
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <h2 id="title">Will You Be My Valentine? ❤️</h2>
+  <button id="yesBtn" onclick="saveResponse('YES')">Yes 😍</button>
+  <button id="noBtn" onclick="saveResponse('NO')">No 😅</button>
+</div>
+
+<script type="module">
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import { getFirestore, collection, addDoc }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔽 PASTE YOUR FIREBASE CONFIG HERE */
+const firebaseConfig = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  storageBucket: "PASTE_HERE",
+  messagingSenderId: "PASTE_HERE",
+  appId: "PASTE_HERE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let noCount = 0;
+
+window.saveResponse = async function(answer) {
+  try {
+    await addDoc(collection(db, "responses"), {
+      answer: answer,
+      time: new Date()
+    });
+  } catch (e) {
+    console.log("Save failed", e);
+  }
+
+  if (answer === "YES") {
+    fadeCard();
+  } else {
+    handleNo();
+  }
+};
+
+function fadeCard() {
+  const card = document.getElementById("card");
+  card.style.opacity = "0";
+  setTimeout(() => {
+    card.style.display = "none";
+  }, 600);
+}
+
+function handleNo() {
+  noCount++;
+  const title = document.getElementById("title");
+  const card = document.getElementById("card");
+
+  if (noCount === 1) {
+    shake(card);
+  } 
+  else if (noCount === 2) {
+    title.innerText = "Please don’t abandon me 🥺";
+  } 
+  else if (noCount === 3) {
+    title.innerText = "Love, please come with me ❤️";
+  } 
+  else if (noCount >= 4) {
+    title.innerText =
+      "Life will have so many ups and downs, this is the only down for us I promise 💞";
+  }
+}
+
+function shake(element) {
+  element.animate([
+    { transform: 'translateX(0px)' },
+    { transform: 'translateX(-12px)' },
+    { transform: 'translateX(12px)' },
+    { transform: 'translateX(-12px)' },
+    { transform: 'translateX(12px)' },
+    { transform: 'translateX(0px)' }
+  ], {
+    duration: 400
+  });
+}
+</script>
+
+</body>
+</html>
