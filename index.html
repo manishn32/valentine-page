@@ -2,155 +2,171 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Be My Valentine ❤️</title>
+<title>For You ❤️</title>
+
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: Arial, sans-serif;
-  }
+html, body {
+margin: 0;
+padding: 0;
+height: 100%;
+font-family: Arial;
+background-image: url('her.JPG');
+background-size: cover;
+background-position: center;
+display: flex;
+justify-content: center;
+align-items: center;
+}
 
-  /* Full-screen background image as an element */
-  .bg {
-    position: fixed;
-    inset: 0;              /* top:0; right:0; bottom:0; left:0 */
-    width: 100%;
-    height: 100%;
-    object-fit: cover;     /* Fill the screen, maintain aspect ratio */
-    object-position: center center;
-    z-index: -1;           /* behind content */
-  }
+/* ENVELOPE */
+.envelope {
+width: 260px;
+height: 180px;
+background: #f5c6d6;
+position: relative;
+cursor: pointer;
+border-radius: 8px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+transition: opacity 0.6s ease;
+}
 
-  /* Optional: soft overlay to boost contrast */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.15);
-    z-index: 0;
-    pointer-events: none;
-  }
+.flap {
+width: 0;
+height: 0;
+border-left: 130px solid transparent;
+border-right: 130px solid transparent;
+border-bottom: 90px solid #ff9ab5;
+position: absolute;
+top: 0;
+left: 0;
+transform-origin: top;
+transition: transform 0.6s;
+}
 
-  /* Center card */
-  .wrap {
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative; /* for z-index stacking */
-    z-index: 1;
-  }
+.letter {
+position: absolute;
+top: 20px;
+left: 10px;
+width: 240px;
+height: 140px;
+background: white;
+border-radius: 10px;
+text-align: center;
+padding-top: 10px;
+display: none;
+}
 
-  .card {
-    background: rgba(255,255,255,0.95);
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    width: 320px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transition: opacity 0.6s ease;
-  }
+/* OPEN STATE */
+.open .flap {
+transform: rotateX(180deg);
+}
 
-  button {
-    padding: 12px 20px;
-    margin: 10px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
+.open .letter {
+display: block;
+}
 
-  #yesBtn { background: #4CAF50; color: white; }
-  #noBtn  { background: #f44336; color: white; }
+button {
+padding: 8px 14px;
+margin: 6px;
+border-radius: 16px;
+border: none;
+cursor: pointer;
+}
+
+#yesBtn { background: #4CAF50; color: white; }
+#noBtn { background: #f44336; color: white; }
 </style>
 </head>
+
 <body>
-  <!-- Fullscreen image -->
-  <img class="bg" src="her.JPG" alt="Background">
-  <div class="overlay"></div>
 
-  <div class="wrap">
-    <div class="card" id="card">
-      <h2 id="title">Will You Be My Valentine? ❤️</h2>
-      <button id="yesBtn">Yes 😍</button>
-      <button id="noBtn">No 😅</button>
-    </div>
-  </div>
+<div class="envelope" id="envelope" onclick="openEnvelope()">
+<div class="flap"></div>
 
-  <!-- Firebase scripts and your JS identical to current -->
-  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+<div class="letter" id="letter">
+<h3 id="title">Will You Be My Valentine? ❤️</h3>
+<button id="yesBtn" onclick="saveResponse('YES'); event.stopPropagation();">Yes</button>
+<button id="noBtn" onclick="saveResponse('NO'); event.stopPropagation();">No</button>
+</div>
+</div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAt_RwhWPoBXVL8RNMMVXRckc4GCVFcRWw",
-      authDomain: "valentine-c63b3.firebaseapp.com",
-      projectId: "valentine-c63b3",
-      storageBucket: "valentine-c63b3.firebasestorage.app",
-      messagingSenderId: "406251981974",
-      appId: "1:406251981974:web:af03ce19b021a2e2a446b7"
-    };
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+<script type="module">
+/* 🔽 PASTE YOUR FIREBASE CONFIG HERE */
+const firebaseConfig = {
+   apiKey: "AIzaSyAt_RwhWPoBXVL8RNMMVXRckc4GCVFcRWw",
+   authDomain: "valentine-c63b3.firebaseapp.com",
+   projectId: "valentine-c63b3",
+   storageBucket: "valentine-c63b3.firebasestorage.app",
+   messagingSenderId: "406251981974",
+   appId: "1:406251981974:web:af03ce19b021a2e2a446b7"
+  };
 
-    let noCount = 0;
 
-    window.saveResponse = async function(answer) {
-      try {
-        await addDoc(collection(db, "responses"), {
-          answer: answer,
-          time: new Date()
-        });
-      } catch (e) {
-        console.log("Save failed", e);
-      }
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
 
-      if (answer === "YES") {
-        fadeCard();
-      } else {
-        handleNo();
-      }
-    };
+let noCount = 0;
 
-    document.getElementById('yesBtn').addEventListener('click', () => saveResponse('YES'));
-    document.getElementById('noBtn').addEventListener('click', () => saveResponse('NO'));
+function openEnvelope() {
+document.getElementById("envelope").classList.add("open");
+}
 
-    function fadeCard() {
-      const card = document.getElementById("card");
-      card.style.opacity = "0";
-      setTimeout(() => { card.style.display = "none"; }, 600);
-    }
+function saveResponse(answer) {
+db.collection("responses").add({
+answer: answer,
+time: new Date()
+});
 
-    function handleNo() {
-      noCount++;
-      const title = document.getElementById("title");
-      const card = document.getElementById("card");
+if (answer === "YES") {
+fadeEnvelope();
+} else {
+handleNo();
+}
+}
 
-      if (noCount === 1) {
-        shake(card);
-      } else if (noCount === 2) {
-        title.innerText = "Please don’t abandon me 🥺";
-      } else if (noCount === 3) {
-        title.innerText = "Love, please come with me ❤️";
-      } else if (noCount >= 4) {
-        title.innerText = "Life will have so many ups and downs, this is the only down for us I promise 💞";
-      }
-    }
+function fadeEnvelope() {
+const env = document.getElementById("envelope");
+env.style.opacity = "0";
+setTimeout(() => {
+env.style.display = "none";
+}, 600);
+}
 
-    function shake(element) {
-      element.animate([
-        { transform: 'translateX(0px)' },
-        { transform: 'translateX(-12px)' },
-        { transform: 'translateX(12px)' },
-        { transform: 'translateX(-12px)' },
-        { transform: 'translateX(12px)' },
-        { transform: 'translateX(0px)' }
-      ], { duration: 400 });
-    }
-  </script>
+function handleNo() {
+noCount++;
+const title = document.getElementById("title");
+const letter = document.getElementById("letter");
+
+if (noCount === 1) {
+shake(letter);
+}
+else if (noCount === 2) {
+title.innerText = "Please don’t abandon me 🥺";
+}
+else if (noCount === 3) {
+title.innerText = "Love, please come with me ❤️";
+}
+else {
+title.innerText =
+"Life will have so many ups and downs, this is the only down for us I promise 💞";
+}
+}
+
+function shake(element) {
+element.animate([
+{ transform: 'translateX(0px)' },
+{ transform: 'translateX(-12px)' },
+{ transform: 'translateX(12px)' },
+{ transform: 'translateX(-12px)' },
+{ transform: 'translateX(12px)' },
+{ transform: 'translateX(0px)' }
+], { duration: 400 });
+}
+</script>
+
 </body>
 </html>
