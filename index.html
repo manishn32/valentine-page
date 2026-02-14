@@ -51,8 +51,8 @@ button {
 
 <div class="card" id="card">
   <h2 id="title">Will You Be My Valentine? ❤️</h2>
-  <button id="yesBtn" onclick="saveResponse('YES')">Yes 😍</button>
-  <button id="noBtn" onclick="saveResponse('NO')">No 😅</button>
+  <button id="yesBtn">Yes 😍</button>
+  <button id="noBtn">No 😅</button>
 </div>
 <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
@@ -93,6 +93,9 @@ window.saveResponse = async function(answer) {
     handleNo();
   }
 };
+
+document.getElementById('yesBtn').addEventListener('click', () => saveResponse('YES'));
+document.getElementById('noBtn').addEventListener('click', () => saveResponse('NO'));
 
 function fadeCard() {
   const card = document.getElementById("card");
