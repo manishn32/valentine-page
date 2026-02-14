@@ -56,21 +56,20 @@ button {
 </div>
 
 <script type="module">
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  
 import { getFirestore, collection, addDoc }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 
 /* 🔽 PASTE YOUR FIREBASE CONFIG HERE */
 const firebaseConfig = {
-  apiKey: "PASTE_HERE",
-  authDomain: "PASTE_HERE",
-  projectId: "PASTE_HERE",
-  storageBucket: "PASTE_HERE",
-  messagingSenderId: "PASTE_HERE",
-  appId: "PASTE_HERE"
-};
+   apiKey: "AIzaSyAt_RwhWPoBXVL8RNMMVXRckc4GCVFcRWw",
+   authDomain: "valentine-c63b3.firebaseapp.com",
+   projectId: "valentine-c63b3",
+   storageBucket: "valentine-c63b3.firebasestorage.app",
+   messagingSenderId: "406251981974",
+   appId: "1:406251981974:web:af03ce19b021a2e2a446b7"
+  };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
