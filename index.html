@@ -16,6 +16,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
 
     /* ENVELOPE */
@@ -76,6 +77,31 @@
 
     #yesBtn { background: #4CAF50; color: white; }
     #noBtn  { background: #f44336; color: white; }
+
+    /* --- Valentine message overlay --- */
+    #valMsg {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none; /* ignore clicks */
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #valMsg > div {
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      padding: 18px 26px;
+      border-radius: 16px;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      backdrop-filter: blur(2px);
+    }
+    #valMsg.show {
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -91,9 +117,14 @@
     </div>
   </div>
 
-<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
-<script type="module">
+  <!-- Valentine message overlay -->
+  <div id="valMsg" aria-hidden="true">
+    <div>Happy Valentine’s Day my love ❤️</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import {
       getFirestore,
@@ -123,6 +154,7 @@
     const titleEl  = document.getElementById("title");
     const yesBtn   = document.getElementById("yesBtn");
     const noBtn    = document.getElementById("noBtn");
+    const valMsg   = document.getElementById("valMsg");
 
     // --- UI interactions ---
     function openEnvelope() {
@@ -141,7 +173,7 @@
         });
 
         if (answer === "YES") {
-          fadeEnvelope();
+          showValentineMessageThenFade();
         } else {
           handleNo();
           // Re-enable only after a "No" so they can click again
@@ -156,11 +188,23 @@
       }
     }
 
-    function fadeEnvelope() {
-      envelope.style.opacity = "0";
+    function showValentineMessageThenFade() {
+      // Show overlay message
+      valMsg.classList.add('show');
+
+      // After ~3 seconds, fade out envelope and overlay to leave just the background
       setTimeout(() => {
-        envelope.style.display = "none";
-      }, 600);
+        // Fade envelope
+        envelope.style.opacity = "0";
+        // Fade overlay message
+        valMsg.classList.remove('show');
+
+        // After transition completes, remove both from layout
+        setTimeout(() => {
+          envelope.style.display = "none";
+          valMsg.style.display = "none";
+        }, 650); // matches CSS transition (0.6s) with a tiny buffer
+      }, 3000);
     }
 
     function handleNo() {
