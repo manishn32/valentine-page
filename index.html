@@ -1,10 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>For You ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <style>
+    :root {
+      /* Envelope scales with viewport width but capped for larger screens */
+      --env-w: min(88vw, 360px);
+      --env-h: calc(var(--env-w) * 0.69);       /* similar ratio to your 260x180 */
+      --radius: 10px;
+
+      /* Typography using clamp(min, preferred, max) */
+      --title-size: clamp(18px, 4.5vw, 24px);
+      --btn-font: clamp(15px, 4vw, 18px);
+
+      /* Buttons: comfortable touch targets */
+      --btn-pad-y: clamp(10px, 2.4vw, 14px);
+      --btn-pad-x: clamp(16px, 4vw, 22px);
+      --btn-min-h: 44px; /* recommended minimum for touch */
+    }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -17,26 +34,29 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      -webkit-tap-highlight-color: transparent; /* cleaner taps on mobile */
     }
 
     /* ENVELOPE */
     .envelope {
-      width: 260px;
-      height: 180px;
+      width: var(--env-w);
+      height: var(--env-h);
       background: #f5c6d6;
       position: relative;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: var(--radius);
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       transition: opacity 0.6s ease;
+      will-change: transform, opacity;
     }
 
+    /* Responsive flap created with borders (triangle) */
     .flap {
       width: 0;
       height: 0;
-      border-left: 130px solid transparent;
-      border-right: 130px solid transparent;
-      border-bottom: 90px solid #ff9ab5;
+      border-left: calc(var(--env-w) / 2) solid transparent;
+      border-right: calc(var(--env-w) / 2) solid transparent;
+      border-bottom: calc(var(--env-h) * 0.5) solid #ff9ab5; /* triangle height ~50% of env height */
       position: absolute;
       top: 0;
       left: 0;
@@ -44,35 +64,44 @@
       transition: transform 0.6s;
     }
 
+    /* Letter scales inside */
     .letter {
       position: absolute;
-      top: 20px;
-      left: 10px;
-      width: 240px;
-      height: 140px;
+      top: calc(var(--env-h) * 0.11);
+      left: calc(var(--env-w) * 0.04);
+      width: calc(var(--env-w) - var(--env-w) * 0.08);
+      height: calc(var(--env-h) - var(--env-h) * 0.22);
       background: #ffffff;
-      border-radius: 10px;
+      border-radius: calc(var(--radius) + 2px);
       text-align: center;
-      padding-top: 10px;
+      padding: 10px 12px;
       display: none;
+      box-sizing: border-box;
+    }
+
+    .letter h3 {
+      margin: 8px 8px 14px;
+      font-size: var(--title-size);
+      line-height: 1.25;
     }
 
     /* OPEN STATE */
-    .open .flap {
-      transform: rotateX(180deg);
-    }
+    .open .flap { transform: rotateX(180deg); }
+    .open .letter { display: block; }
 
-    .open .letter {
-      display: block;
-    }
-
+    /* Buttons */
     button {
-      padding: 8px 14px;
+      padding: var(--btn-pad-y) var(--btn-pad-x);
       margin: 6px;
-      border-radius: 16px;
+      border-radius: 18px;
       border: none;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: var(--btn-font);
+      min-height: var(--btn-min-h);
+      min-width: 96px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      touch-action: manipulation; /* faster taps + reduce double-tap zoom */
     }
 
     #yesBtn { background: #4CAF50; color: white; }
@@ -88,32 +117,46 @@
       pointer-events: none; /* ignore clicks */
       opacity: 0;
       transition: opacity 0.6s ease;
+      padding: 16px; /* avoid edge clipping on very small screens */
+      box-sizing: border-box;
     }
     #valMsg > div {
       background: rgba(0,0,0,0.45);
       color: #fff;
       padding: 18px 26px;
       border-radius: 16px;
-      font-size: 22px;
+      font-size: clamp(18px, 4.8vw, 22px);
       font-weight: 700;
       text-align: center;
       backdrop-filter: blur(2px);
     }
-    #valMsg.show {
-      opacity: 1;
+    #valMsg.show { opacity: 1; }
+
+    /* Small phones: nudge sizes up slightly */
+    @media (max-width: 380px) {
+      :root {
+        --env-w: min(92vw, 340px);
+        --title-size: clamp(18px, 5vw, 24px);
+        --btn-font: clamp(16px, 4.6vw, 18px);
+      }
+    }
+
+    /* Light motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .flap, #valMsg { transition: none; }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="envelope" id="envelope">
+  <div class="envelope" id="envelope" aria-label="Open the envelope">
     <div class="flap"></div>
 
-    <div class="letter" id="letter">
+    <div class="letter" id="letter" role="dialog" aria-modal="true" aria-labelledby="title">
       <h3 id="title">Will You Be My Valentine? ❤️</h3>
-      <button id="yesBtn">Yes</button>
-      <button id="noBtn">No</button>
+      <button id="yesBtn" aria-label="Yes">Yes</button>
+      <button id="noBtn" aria-label="No">No</button>
     </div>
   </div>
 
@@ -122,8 +165,10 @@
     <div>Happy Valentine’s Day my love ❤️<br> Did you like the gifts?</div>
   </div>
 
+  <!-- Firebase (kept as in your original) -->
   <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import {
